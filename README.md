@@ -86,8 +86,3 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 
 ---
 
-## 📂 Installation
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/username/shettycinemas.git
-   cd shettycinemas
