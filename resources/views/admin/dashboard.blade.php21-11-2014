@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>PHP Update Required</title>
+</head>
+<body>
+<div style="border:1px solid lightgray;padding:10px;margin:10px;">
+<div style="background-color: #f5f5f5;padding:5px 10px;border-radius: 4px;display: flex;align-items: center;">
+<div style="font-size: 1.2em;color: #dc3232;margin-right: 5px;">!</div>
+<div style="font-weight: bold;">PHP Update Required</div>
+<div style="margin-left: auto;font-size: 1.2em;color: #dc3232;">▲</div>
+</div>
+<p>Server has detected that your site is running on an older version of PHP.</p>
+<h3>What is PHP and how does it affect my site?</h3>
+<p>PHP is the programming language we use to build and maintain you application. Newer versions of PHP are both faster and more secure, so updating will have a positive effect on your site's performance.</p>
+<button style="background-color: #007bff;color: white;padding: 10px 20px;border: none;border-radius: 4px;cursor: pointer;">Contact Administrator for version upgrade.</button>
+</div>
+</body>
+</html>

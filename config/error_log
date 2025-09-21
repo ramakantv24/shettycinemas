@@ -1,0 +1,4 @@
+[14-Feb-2025 04:02:20 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/z2tf57sc30cw/public_html/tv.shettycinemas.com/config/services.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/z2tf57sc30cw/public_html/tv.shettycinemas.com/config/services.php on line 18

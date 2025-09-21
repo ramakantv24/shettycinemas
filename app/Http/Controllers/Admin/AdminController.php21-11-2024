@@ -1,0 +1,335 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use URL;
+use App;
+use DB;
+use Auth;
+use Illuminate\Support\Str;
+use file;
+use App\Models\User;
+use App\Models\Tvdata;
+use App\Models\Tvtype;
+use App\Models\Grouptv;
+use App\Models\Subgrouptv;
+
+
+
+class AdminController extends Controller
+{
+
+    public function __construct(){
+        $this->middleware('auth');
+        $this->middleware('admin');
+    }
+
+    public function index(){
+		
+        return view('admin.dashboard');
+    }	
+
+#GROUP TV
+	public function all_grouptv(){
+		
+		$grouptv = Grouptv::orderBy('id', 'DESC')->get();
+        #return view('admin.grouptv.list',compact('grouptv'));
+        return view('admin.dashboard');
+    }
+	
+	public function add_grouptv(){ 
+        #return view('admin.grouptv.add');
+        return view('admin.dashboard');
+    }
+	
+	public function add_grouptv_action(Request $request){
+		
+		$request->validate([
+            'group_name'           => ['required'],
+        ]);
+		
+		$Grouptv 				= new Grouptv;
+		$Grouptv->group_name          = $request->group_name;
+		$Grouptv->save();
+		
+        return redirect('/admin/grouptv/list')->with('success', 'You have successfully added!');
+    }
+	
+	public function edit_grouptv($id){
+		
+		$grouptvInfo = Grouptv::where('id',$id)->first();
+        return view('admin.dashboard');
+        #return view('admin.grouptv.edit',compact('grouptvInfo'));
+	}
+	
+	public function edit_grouptv_action(Request $request){
+		
+		$request->validate([
+            'group_name'           => ['required'],
+        ]);
+				
+		$dataArray = array();
+		$dataArray['group_name']        = $request->group_name;
+		$dataArray['status']      = $request->status;
+		
+		Grouptv::where('id',$request->id)->update($dataArray);
+
+        return redirect('/admin/grouptv/list')->with('success', 'You have successfully updated!');
+    }
+	
+	public function delete_grouptv($id){		
+		Grouptv::where('id',$id)->delete();
+		return redirect('/admin/grouptv/list')->with('success', 'You have successfully deleted!');
+	}
+	
+#SUB GROUP TV
+	/* public function all_subgrouptv(){
+		
+		$grouptv = Subgrouptv::select('sub_group_tv.*','group_tv.group_name as group_name')->leftjoin('group_tv','group_tv.id','=','sub_group_tv.group_id')->orderBy('sub_group_tv.id', 'DESC')->get();
+        return view('admin.subgrouptv.list',compact('grouptv'));
+    }
+	
+	public function add_subgrouptv(){ 
+		$grouptv = Grouptv::get();
+        return view('admin.subgrouptv.add',compact('grouptv'));
+    }
+	
+	public function add_subgrouptv_action(Request $request){
+		
+		$request->validate([
+            'group_id'           		=> ['required'],
+            'sub_group_name'           	=> ['required'],
+        ]);
+		
+		$Subgrouptv 							= new Subgrouptv;
+		$Subgrouptv->group_id          			= $request->group_id;
+		$Subgrouptv->sub_group_name          	= $request->sub_group_name;
+		$Subgrouptv->save();
+		
+        return redirect('/admin/subgrouptv/list')->with('success', 'You have successfully added!');
+    }
+	
+	public function edit_subgrouptv($id){
+		$grouptv = Grouptv::get();
+		$grouptvInfo = Subgrouptv::where('id',$id)->first();
+        return view('admin.subgrouptv.edit',compact('grouptvInfo','grouptv'));
+	}
+	
+	public function edit_subgrouptv_action(Request $request){
+		
+		$request->validate([
+            'group_id'           		=> ['required'],
+            'sub_group_name'           	=> ['required'],
+        ]);
+				
+		$dataArray = array();
+		$dataArray['group_id']        	= $request->group_id;
+		$dataArray['sub_group_name'] 	= $request->sub_group_name;
+		
+		Subgrouptv::where('id',$request->id)->update($dataArray);
+
+        return redirect('/admin/subgrouptv/list')->with('success', 'You have successfully updated!');
+    }
+	
+	public function delete_subgrouptv($id){		
+		Subgrouptv::where('id',$id)->delete();
+		return redirect('/admin/subgrouptv/list')->with('success', 'You have successfully deleted!');
+	} */
+	
+	
+	#TV
+	public function all_tv(){
+		
+		#$tv = Tvtype::select('tv_type.*','group_tv.group_name as group_name','sub_group_tv.sub_group_name as sub_group_name')->leftjoin('group_tv','group_tv.id','=','tv_type.group_id')->leftjoin('sub_group_tv','sub_group_tv.id','=','tv_type.sub_group_id')->orderBy('tv_type.id', 'DESC')->get();
+        $tv = Tvtype::select('tv_type.*')->orderBy('tv_type.id', 'DESC')->get();
+        return view('admin.dashboard');
+        #return view('admin.tv.list',compact('tv'));
+    }
+	
+	public function add_tv(){ 
+		#$grouptv = Grouptv::get();
+		#$Subgrouptv = Subgrouptv::get();
+        
+        return view('admin.dashboard');
+        #return view('admin.tv.add');
+    }
+	
+	public function add_tv_action(Request $request){
+		
+		$request->validate([
+            #'group_id'           		=> ['required'],
+            #'sub_group_id'           	=> ['required'],
+            'tv_number'           		=> ['required'],
+            'tv_name'           		=> ['required'],
+        ]);
+		
+		$Tvtype 							= new Tvtype;
+		#$Tvtype->group_id          			= $request->group_id;
+		#$Tvtype->sub_group_id          		= $request->sub_group_id;
+		$Tvtype->tv_number          		= $request->tv_number;
+		$Tvtype->tv_name          			= $request->tv_name;
+		$Tvtype->save();
+		
+        return redirect('/admin/tv/list')->with('success', 'You have successfully added!');
+    }
+	
+	public function edit_tv($id){
+		#$grouptv = Grouptv::get();
+		#$Subgrouptv = Subgrouptv::get();
+		$TvtypeInfo = Tvtype::where('id',$id)->first();
+        
+        return view('admin.dashboard');
+        #return view('admin.tv.edit',compact('TvtypeInfo'));
+	}
+	
+	public function edit_tv_action(Request $request){
+		
+		$request->validate([
+            #'group_id'           		=> ['required'],
+            #'sub_group_id'           	=> ['required'],
+            'tv_number'           		=> ['required'],
+            'tv_name'           		=> ['required'],
+        ]);
+				
+		$dataArray = array();
+		#$dataArray['group_id']        	= $request->group_id;
+		#$dataArray['sub_group_id'] 		= $request->sub_group_id;
+		$dataArray['tv_number'] 		= $request->tv_number;
+		$dataArray['tv_name'] 			= $request->tv_name;
+		
+		Tvtype::where('id',$request->id)->update($dataArray);
+
+        return redirect('/admin/tv/list')->with('success', 'You have successfully updated!');
+    }
+	
+	public function delete_tv($id){		
+		Tvtype::where('id',$id)->delete();
+		return redirect('/admin/tv/list')->with('success', 'You have successfully deleted!');
+	}
+	
+	#TV Data
+	public function all_tvdata(){
+		
+		#$tv = Tvdata::select('tv_data.*','group_tv.group_name as group_name','sub_group_tv.sub_group_name as sub_group_name','tv_type.tv_number as tv_number','tv_type.tv_name as tv_name')->leftjoin('group_tv','group_tv.id','=','tv_data.group_id')->leftjoin('sub_group_tv','sub_group_tv.id','=','tv_data.sub_group_id')->leftjoin('tv_type','tv_type.id','=','tv_data.tv_type_id')->orderBy('tv_data.id', 'DESC')->get();
+        $tv = Tvdata::select('tv_data.*','group_tv.group_name as group_name','tv_type.tv_number as tv_number','tv_type.tv_name as tv_name')->leftjoin('group_tv','group_tv.id','=','tv_data.group_id')->leftjoin('tv_type','tv_type.id','=','tv_data.tv_type_id')->orderBy('tv_data.id', 'DESC')->get();
+        
+        return view('admin.dashboard');
+        #return view('admin.tvdata.list',compact('tv'));
+    }
+	
+	public function add_tvdata(){ 
+		$grouptv = Grouptv::get();
+		#$Subgrouptv = Subgrouptv::get();
+		$Tvtype = Tvtype::get();
+        
+        return view('admin.dashboard');
+        #return view('admin.tvdata.add',compact('grouptv','Tvtype'));
+    }
+	
+	public function add_tvdata_action(Request $request){
+		
+		$request->validate([
+            'group_id'           		=> ['required'],
+            #'sub_group_id'           	=> ['required'],
+            'tv_type_id'           		=> ['required'],
+            'type'           			=> ['required'],
+            //'value'           			=> ['required'],
+        ]);
+
+		$Tvdata 							= new Tvdata;
+		$Tvdata->group_id          			= $request->group_id;
+		#$Tvdata->sub_group_id          		= $request->sub_group_id;
+		$Tvdata->tv_type_id          		= $request->tv_type_id;
+		$Tvdata->type          				= $request->type;
+		
+		if($request->type=='Image'){
+			if($request->hasfile('image')) {			
+				$file = $request->file('image');
+				$ImageName = time().rand(1,100).'.'.$file->extension();
+				$file->move(public_path('uploads/tvdata'), $ImageName); 
+				$Tvdata->value          			= url("public/uploads/tvdata/".$ImageName);
+			}
+			
+		}elseif($request->type=='Video'){
+			$Tvdata->value          			= url("public/uploads/video/".$request->video_link);
+		}
+		
+		$Tvdata->save();
+		
+        return redirect('/admin/tvdata/list')->with('success', 'You have successfully added!');
+    }
+	
+	public function edit_tvdata($id){
+		$grouptv = Grouptv::get();
+		#$Subgrouptv = Subgrouptv::get();
+		$Tvtype = Tvtype::get();
+		$TvtypeInfo = Tvdata::where('id',$id)->first();
+        
+        return view('admin.dashboard');
+        #return view('admin.tvdata.edit',compact('TvtypeInfo','grouptv','Tvtype'));
+	}
+	
+	public function edit_tvdata_action(Request $request){
+		
+		$request->validate([
+            'group_id'           		=> ['required'],
+            #'sub_group_id'           	=> ['required'],
+            'tv_type_id'           		=> ['required'],
+            'type'           			=> ['required'],
+            //'value'           			=> ['required'],
+        ]);
+				
+		$dataArray = array();
+		$dataArray['group_id']        	= $request->group_id;
+		#$dataArray['sub_group_id'] 		= $request->sub_group_id;
+		$dataArray['tv_type_id'] 		= $request->tv_type_id;
+		$dataArray['type'] 			= $request->type;
+		
+		if($request->type=='Image'){
+			if($request->hasfile('image')) {			
+				$file = $request->file('image');
+				$ImageName = time().rand(1,100).'.'.$file->extension();
+				$file->move(public_path('uploads/tvdata'), $ImageName); 
+
+				$dataArray['value']          			= url("public/uploads/tvdata/".$ImageName);
+			}
+			
+		}elseif($request->type=='Video'){
+			$dataArray['value']         			= url("public/uploads/video/".$request->video_link);
+		}
+		
+		Tvdata::where('id',$request->id)->update($dataArray);
+
+        return redirect('/admin/tvdata/list')->with('success', 'You have successfully updated!');
+    }
+	
+	public function delete_tvdata($id){		
+		Tvdata::where('id',$id)->delete();
+		return redirect('/admin/tvdata/list')->with('success', 'You have successfully deleted!');
+	}
+
+    public function upload_tvvideo_action(Request $request)
+    {
+        $request->validate([
+            'videofile' => 'required',
+        ]);
+   
+		/* if(isset($request->videofile)){
+			$fileName = time().'.'.request()->videofile->getClientOriginalExtension();
+            request()->videofile->move(public_path('uploads/video/'), $fileName);
+		} */
+
+        if($request->hasfile('videofile')) {			
+            $file = $request->file('videofile');
+            $ImageName = time().rand(1,100).'.'.$file->extension();
+            $file->move(public_path('uploads/video'), $ImageName); 
+        }
+   
+        return response()->json(['success'=>'You have successfully upload file.','file_name'=>$ImageName]);
+    }	
+	
+}
